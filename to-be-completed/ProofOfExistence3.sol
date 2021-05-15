@@ -8,14 +8,15 @@ contract ProofOfExistence3 {
   function storeProof(bytes32 proof) 
     internal 
   {
-
+   proofs[proof] = true ;
   }
   
   // calculate and store the proof for a document
   function notarize(string memory document) 
     public 
   { 
-
+   bytes32 proof = proofFor(document);
+   storeProof(proof);
   }
   
   // helper function to get a document's keccak256 hash
@@ -24,16 +25,17 @@ contract ProofOfExistence3 {
     private 
     returns (bytes32) 
   {
- 
+   return keccak256(abi.encodePacked(document));
   }
   
-  // check if a document has been notarized
+  // check if  a document has been notarized
   function checkDocument(string memory document) 
     public 
     view 
     returns (bool) 
   {
-
+  bytes32 proof = proofFor(document);
+  return hasProof(proof);
   }
 
   // returns true if proof is stored
@@ -42,6 +44,8 @@ contract ProofOfExistence3 {
     view 
     returns(bool) 
   {
-
+  if(proofs[proof] == true)
+  {return true;
   }
-}
+  return false;
+}}
