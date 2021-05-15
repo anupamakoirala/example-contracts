@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.8.0;
 
 contract ProofOfExistence2 {
 
@@ -9,16 +9,18 @@ contract ProofOfExistence2 {
   // *transactional function*
   function storeProof(bytes32 proof) 
     public 
-  {
-  
+  { 
+   
+   proofs.push(proof);
   }
 
   // calculate and store the proof for a document
   // *transactional function*
   function notarize(string calldata document) 
     external 
-  {
-
+  {bytes32 proof;
+   proof = proofFor(document);
+   storeProof(proof);
   }
 
   // helper function to get a document's sha256
@@ -28,7 +30,7 @@ contract ProofOfExistence2 {
     public 
     returns (bytes32) 
   {
-    
+    return sha256(abi.encodePacked(document));
   }
 
   // check if a document has been notarized
@@ -37,7 +39,9 @@ contract ProofOfExistence2 {
     public 
     view 
     returns (bool) 
-  {
+  { bytes32 proof;
+    proof = proofFor(document);
+    return hasProof(proof);
     
   }
 
@@ -47,6 +51,14 @@ contract ProofOfExistence2 {
     internal 
     view 
     returns (bool) 
-  {
+  {for(uint256 i=0; i < proofs.length; i++){
+      if(proofs[i] == proof){
+          return true;
+      }
+  }
+  return false;
+      
+  }
+  
    
 }
